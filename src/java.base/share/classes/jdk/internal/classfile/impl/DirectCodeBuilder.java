@@ -614,7 +614,10 @@ public final class DirectCodeBuilder
         bytecodesBufWriter.writeIntInt(low, high);
         var caseMap = new HashMap<Integer, Label>(cases.size());
         for (var c : cases) {
-            caseMap.put(c.caseValue(), c.target());
+            var previous = caseMap.put(c.caseValue(), c.target());
+            if (previous != null) {
+                    throw new IllegalArgumentException("duplicate case " + c.caseValue());
+            }
         }
         for (long l = low; l<=high; l++) {
             var target = caseMap.getOrDefault((int)l, defaultTarget);
